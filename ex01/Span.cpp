@@ -1,4 +1,7 @@
-Span::Span()
+
+#include "Span.hpp"
+
+Span::Span(): n(0)
 {
 	std::cout << "Span Constructor Called.\n";
 }
@@ -18,7 +21,7 @@ Span::Span(Span const &other)
 
 Span& Span::operator=(Span const &other)
 {
-	if (this = &other)
+	if (this == &other)
 		return (*this);
 	n = other.n;
 	stored.clear();
@@ -34,12 +37,49 @@ Span::~Span()
 
 unsigned int	Span::shortestSpan()
 {
-
+	try
+	{
+		if (n > 1)
+		{
+			long int min = longestSpan();
+			long int span = 0;
+			for (std::vector<int>::iterator ptr = stored.begin(); ptr < stored.end(); ptr++)
+			{
+				for (std::vector<int>::iterator ptr1 = ptr; ptr1 < stored.end(); ptr1++)
+				{
+					if (ptr == ptr1)
+						continue;
+					span = std::abs((long)*ptr - (long)*ptr1);
+					if (span < min)
+						min = span;
+				}
+			}
+			return (min);
+		}
+		else
+			throw Span::SpanNotBigEnoughException();
+	}
+	catch(const std::exception& e)
+	{
+		std::cerr << e.what() << '\n';
+	}
+	return (0);
 }
 
 unsigned int	Span::longestSpan()
 {
-
+	try
+	{
+		if (n > 1)
+			return std::abs(*std::max_element(stored.begin(), stored.end()) - *std::min_element(stored.begin(), stored.end()));
+		else
+			throw Span::SpanNotBigEnoughException();
+	}
+	catch(const std::exception& e)
+	{
+		std::cerr << e.what() << '\n';
+	}
+	return (0);
 }
 
 void	Span::addNumber(unsigned int last)
@@ -49,7 +89,25 @@ void	Span::addNumber(unsigned int last)
 		if (stored.size() >= n)
 			throw Span::SpanAlreadyFullException();
 		else
-			store.push_back(last);
+			stored.push_back(last);
+	}
+	catch(std::exception &e)
+	{
+		std::cerr << e.what();
+	}
+}
+
+void	Span::addMultNumbers(const std::vector<unsigned int>::iterator& begin, const std::vector<unsigned int>::iterator& end)
+{
+	try
+	{
+		if (std::distance(begin, end) + stored.size() > n )
+		{
+			stored.insert(stored.end(), begin, begin + (n - stored.size()));
+			throw Span::SpanAlreadyFullException();
+		}
+		else
+			stored.insert(stored.end(), begin, end);
 	}
 	catch(std::exception &e)
 	{
@@ -59,5 +117,10 @@ void	Span::addNumber(unsigned int last)
 
 const char* Span::SpanAlreadyFullException::what() const throw()
 {
-	return "There are already " << n << " elements stored.\n";
+	return "This span is already full of elements stored.\n";
+}
+
+const char* Span::SpanNotBigEnoughException::what() const throw()
+{
+	return "There are not enough elements stored to calculate span.\n";
 }

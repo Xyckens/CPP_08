@@ -21,13 +21,22 @@ public:
 
 	unsigned int	shortestSpan();
 	unsigned int	longestSpan();
+
 	void			addNumber(unsigned int last);
+	void			addMultNumbers(const std::vector<unsigned int>::iterator& begin, const std::vector<unsigned int>::iterator& end);
+
 
 	class SpanAlreadyFullException: public std::exception
 	{
 	public:
 		const char* what() const throw();
-	}
+	};
+
+	class SpanNotBigEnoughException: public std::exception
+	{
+	public:
+		const char* what() const throw();
+	};
 };
 
 #endif
