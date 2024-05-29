@@ -5,6 +5,7 @@
 # include <algorithm>
 # include <vector>
 # include <stack>
+#include <list>
 
 template <typename T>
 class MutantStack: public std::stack<T>
